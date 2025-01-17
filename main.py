@@ -3,6 +3,7 @@ import moderngl as mgl
 import sys
 from model import *
 from camera import *
+from light import Light
 
 
 class GraphicsEngine:
@@ -17,14 +18,23 @@ class GraphicsEngine:
         pg.display.set_mode(self.WIN_SIZE, flags=pg.OPENGL | pg.DOUBLEBUF)
         pg.display.set_caption("Unity Python")
 
+
+        pg.event.set_grab(True)
+        pg.mouse.set_visible(False)
+
         self.ctx = mgl.create_context()
         # self.ctx.front_face = 'cw'
         self.ctx.enable(flags=mgl.DEPTH_TEST | mgl.CULL_FACE)
 
         self.clock = pg.time.Clock()
         self.time = 0
+        self.delta_time = 0
 
+        #light
+        self.light = Light()
+        #camera
         self.camera = Camera(self)
+        #scene
         self.scene = Cube(self)
 
 
@@ -49,8 +59,9 @@ class GraphicsEngine:
         while True:
             self.get_time()
             self.check_events()
+            self.camera.update()
             self.render()
-            self.clock.tick(60)
+            self.delta_time = self.clock.tick(60)
 
 
 if __name__ == '__main__':
